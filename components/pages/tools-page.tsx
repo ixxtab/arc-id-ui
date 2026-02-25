@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { searchRegistry } from "@/lib/registry";
 import { AgentTool } from "@/lib/types";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export function ToolsPage() {
@@ -24,57 +23,69 @@ export function ToolsPage() {
     }, [tools]);
 
     return (
-        <div className="space-y-6">
-            <div className="space-y-2">
-                <div className="text-4xl font-semibold tracking-tight">Tools</div>
-                <div className="text-sm text-muted-foreground">
+        <div className="space-y-8">
+            <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                    <span className="inline-block h-px w-6 bg-accent" />
+                    <span className="text-[10px] uppercase tracking-widest text-accent">Catalog</span>
+                </div>
+                <h1 className="text-3xl font-bold uppercase tracking-tight text-foreground">
+                    Tools
+                </h1>
+                <p className="max-w-lg text-xs leading-relaxed text-muted-foreground">
                     Public catalog of declared tools across agents. Owner-only tools still require Dashboard access.
+                </p>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-px bg-border">
+                <div className="bg-card p-4">
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Total tools</div>
+                    <div className="mt-2 text-2xl font-bold tracking-tight text-foreground">{stats.total}</div>
+                </div>
+                <div className="bg-card p-4">
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Owner-only</div>
+                    <div className="mt-2 text-2xl font-bold tracking-tight text-foreground">{stats.ownerOnly}</div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <Card className="rounded-2xl">
-                    <CardHeader className="pb-2">
-                        <div className="text-xs text-muted-foreground">Total tools</div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-semibold">{stats.total}</div>
-                    </CardContent>
-                </Card>
+            {/* Tool list */}
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Tool list / {tools.length}</div>
+                </div>
 
-                <Card className="rounded-2xl">
-                    <CardHeader className="pb-2">
-                        <div className="text-xs text-muted-foreground">Owner-only</div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-semibold">{stats.ownerOnly}</div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            <Card className="rounded-2xl">
-                <CardHeader className="pb-2">
-                    <div className="text-sm font-medium">Tool list</div>
-                    <div className="text-xs text-muted-foreground">Later you can add search + tags + categories.</div>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                    {tools.length === 0 ? (
-                        <div className="rounded-2xl border border-dashed p-6 text-sm text-muted-foreground">No tools yet.</div>
-                    ) : (
-                        tools.map((t) => (
-                            <div key={t.id} className="flex items-center justify-between rounded-2xl border p-3">
+                {tools.length === 0 ? (
+                    <div className="border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
+                        NO TOOLS REGISTERED.
+                    </div>
+                ) : (
+                    <div className="space-y-px">
+                        {tools.map((t, i) => (
+                            <div
+                                key={t.id}
+                                className="flex items-center justify-between border border-border bg-card p-3 transition-colors hover:bg-secondary animate-slide-up"
+                                style={{ animationDelay: `${i * 30}ms`, animationFillMode: "both" }}
+                            >
                                 <div>
-                                    <div className="font-medium text-sm">{t.name}</div>
-                                    <div className="text-xs text-muted-foreground font-mono">{t.handle ?? "—"}</div>
+                                    <div className="text-xs font-semibold uppercase tracking-wide text-foreground">
+                                        {t.name}
+                                    </div>
+                                    <div className="font-mono text-[10px] text-muted-foreground">
+                                        {t.handle ?? "--"}
+                                    </div>
                                 </div>
-                                <Badge variant={t.requiresOwner ? "secondary" : "outline"} className="rounded-xl">
+                                <Badge
+                                    variant={t.requiresOwner ? "secondary" : "outline"}
+                                    className="text-[9px] uppercase"
+                                >
                                     {t.requiresOwner ? "owner only" : "public"}
                                 </Badge>
                             </div>
-                        ))
-                    )}
-                </CardContent>
-            </Card>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
